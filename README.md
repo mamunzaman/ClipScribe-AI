@@ -24,7 +24,7 @@ Live transcription uses the **OpenAI Whisper API** (`whisper-1`). Without `OPENA
 ## Features
 
 - AI transcription workflow (upload → progress → processing → result)
-- Drag & drop upload — MP4, MOV, MP3, WAV, max **25 MB** (Whisper API limit)
+- Drag & drop upload — MP4, MOV, MP3, WAV, **25 MB max**, **30 sec minimum**
 - Glassmorphism UI with layered panels and calm dark theme
 - Animated AI processing steps and progress indicators
 - Transcript viewer with timestamp lane, copy, and `.txt` download
@@ -78,6 +78,19 @@ npm run dev
 ```
 
 Visit **http://localhost:3000**
+
+### Environment variables
+
+Copy `.env.local.example` to `.env.local`:
+
+| Variable | Purpose |
+|----------|---------|
+| `OPENAI_API_KEY` | Live Whisper transcription (optional — mock fallback without it) |
+| `DEMO_PASSWORD` | Protects the demo UI (server-only, never exposed to the browser) |
+
+Without `DEMO_PASSWORD` in **development**, the gate is skipped. In **production**, set `DEMO_PASSWORD` on your host (e.g. Vercel).
+
+Demo password is required on **each page reload**. Unlock is **session-memory only** (React state) and is **not** stored in `localStorage`. Use **Lock demo** to return to the gate during the same visit without reloading.
 
 ```bash
 npm run build

@@ -2,13 +2,14 @@
 
 ## Current goal
 
-Deploy to Vercel and add `OPENAI_API_KEY` in project environment settings.
+Deploy to Vercel with `OPENAI_API_KEY` and `DEMO_PASSWORD` environment variables.
 
-## 25 MB limit alignment (2026-05-21) — DONE
+## Demo password gate (2026-05-21) — DONE
 
-- `MAX_FILE_SIZE_MB` → 25 in `lib/constants.ts`
-- Validation message: *File must be 25 MB or smaller for live transcription.*
-- UI copy updated (DropZone, Hero feature card)
-- README / PROJECT_STATUS note Whisper 25 MB MVP limit
+- `POST/GET /api/verify-password` — timing-safe compare, dev bypass when unset
+- `DemoAccessShell` + `DemoPasswordGate` — glass UI, no flash before check
+- Unlock in React state only — password required on every reload
+- Header/footer **Lock demo** (in-session only)
+- Removed `lib/demo-auth.ts` / localStorage persistence
 
-**Verify next:** Deploy with env var; test real clip under 25 MB on production URL.
+**Verify next:** Production deploy; reload always shows gate; Lock demo works without reload.

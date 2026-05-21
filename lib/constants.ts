@@ -13,6 +13,10 @@ export const ACCEPTED_MIME_TYPES = [
 export const MAX_FILE_SIZE_MB = 25;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
+export const MIN_DURATION_SECONDS = 30;
+export const MIN_DURATION_ERROR =
+  "Media must be at least 30 seconds long.";
+
 export const PROCESSING_STEPS = [
   {
     id: "extracting" as const,

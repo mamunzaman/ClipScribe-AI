@@ -8,6 +8,7 @@ import {
 } from "@/lib/constants";
 import { buildTranscriptResult } from "@/lib/build-transcript-result";
 import { generateMockTranscript } from "@/lib/mock-data";
+import { validateMediaDuration } from "@/lib/media-duration";
 import { validateMediaFile } from "@/lib/validation";
 import type {
   AppView,
@@ -109,9 +110,16 @@ export function useTranscriptionFlow() {
   );
 
   const fetchTranscription = useCallback(
-    async (file: File, signal: AbortSignal): Promise<TranscribeApiResponse> => {
+    async (
+      file: File,
+      signal: AbortSignal,
+      durationSeconds?: number
+    ): Promise<TranscribeApiResponse> => {
       const formData = new FormData();
       formData.append("file", file);
+      if (durationSeconds !== undefined && Number.isFinite(durationSeconds)) {
+        formData.append("durationSeconds", String(durationSeconds));
+      }
 
       const res = await fetch("/api/transcribe", {
         method: "POST",
@@ -143,6 +151,14 @@ export function useTranscriptionFlow() {
         return;
       }
 
+      const durationCheck = await validateMediaDuration(file);
+      if (!durationCheck.valid) {
+        setError(durationCheck.error ?? "Invalid file");
+        return;
+      }
+
+      const durationSeconds = durationCheck.durationSeconds;
+
       abortRef.current?.abort();
       runIdRef.current += 1;
       const runId = runIdRef.current;
@@ -162,7 +178,7 @@ export function useTranscriptionFlow() {
         if (runId !== runIdRef.current) return;
 
         const [apiData] = await Promise.all([
-          fetchTranscription(file, controller.signal),
+          fetchTranscription(file, controller.signal, durationSeconds),
           runProcessingSteps(runId),
         ]);
 

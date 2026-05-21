@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Command, Mic2 } from "lucide-react";
+import { useDemoAccess } from "@/components/auth/DemoAccessShell";
+import { Command, Lock, Mic2 } from "lucide-react";
 
 export function Header() {
+  const { lockDemo } = useDemoAccess();
   return (
     <motion.header
       initial={{ opacity: 0, y: -8 }}
@@ -32,9 +34,19 @@ export function Header() {
             Docs
           </a>
         </nav>
-        <div className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[11px] text-zinc-400 backdrop-blur-xl">
-          <Command className="h-3 w-3" />
-          <span className="font-mono">K</span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={lockDemo}
+            className="btn-ghost hidden items-center gap-1.5 px-3 py-1.5 text-[11px] sm:inline-flex"
+          >
+            <Lock className="h-3 w-3" />
+            Lock demo
+          </button>
+          <div className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[11px] text-zinc-400 backdrop-blur-xl">
+            <Command className="h-3 w-3" />
+            <span className="font-mono">K</span>
+          </div>
         </div>
       </div>
     </motion.header>

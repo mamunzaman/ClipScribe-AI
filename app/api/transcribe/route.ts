@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { MIN_DURATION_ERROR, MIN_DURATION_SECONDS } from "@/lib/constants";
 import { validateMediaFile } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -21,6 +22,15 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const durationRaw = formData.get("durationSeconds");
+    if (durationRaw != null && String(durationRaw).trim() !== "") {
+      const duration = Number.parseFloat(String(durationRaw));
+      if (Number.isFinite(duration) && duration < MIN_DURATION_SECONDS) {
+        return NextResponse.json({ error: MIN_DURATION_ERROR }, { status: 400 });
+      }
+    }
+    // TODO: Server-side duration via ffmpeg/ffprobe when client metadata is unavailable.
 
     const apiKey = process.env.OPENAI_API_KEY?.trim();
     if (!apiKey) {

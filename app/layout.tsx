@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { DemoAccessShell } from "@/components/auth/DemoAccessShell";
 import { AppBackground } from "@/components/layout/AppBackground";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -33,9 +34,11 @@ export default function RootLayout({
       >
         <div className="relative flex min-h-screen flex-col">
           <AppBackground />
-          <Header />
-          <main className="relative z-10 flex-1">{children}</main>
-          <Footer />
+          <DemoAccessShell>
+            <Header />
+            <main className="relative z-10 flex-1">{children}</main>
+            <Footer />
+          </DemoAccessShell>
         </div>
       </body>
     </html>
