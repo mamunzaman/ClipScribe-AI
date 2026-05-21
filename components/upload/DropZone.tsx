@@ -142,7 +142,7 @@ export function DropZone({ onFileSelect, error, disabled }: DropZoneProps) {
               {isDragging ? "Release to upload" : "Drop a clip to transcribe"}
             </h3>
             <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
-              Drag & drop, or click to browse. Up to 500 MB.
+              Drag & drop, or click to browse. Up to 25 MB.
             </p>
 
             <div className="mt-3.5 flex flex-wrap items-center justify-center gap-1 sm:justify-start">

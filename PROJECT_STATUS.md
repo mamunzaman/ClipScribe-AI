@@ -1,36 +1,26 @@
 # ClipScribe AI — Project Status
 
-**Last Update:** 2026-05-21 (portfolio screenshots)
+**Last Update:** 2026-05-21 (25 MB upload limit aligned with Whisper)
 
 ## Completed Features
 
 - [x] Next.js 15 App Router + TypeScript + Tailwind
 - [x] Premium dark landing page with hero & features
 - [x] Drag & drop upload (MP4, MOV, MP3, WAV)
-- [x] File validation (type, size, empty)
+- [x] File validation — **max 25 MB** (OpenAI Whisper API limit for this MVP)
 - [x] Upload progress animation
-- [x] Mock AI processing steps (5 stages)
-- [x] Transcript result screen
-- [x] Copy transcript & download .txt
-- [x] Mock summary (summary, key points, action items)
-- [x] Framer Motion animations & glassmorphism UI
-- [x] Base44/iOS 18 glass UI refresh (hero preview, upload sheet, processing, transcript)
-- [x] Premium refinement pass (asymmetric hero, quiet background, layered glass, timestamp lane)
-- [x] QA pass — flow stable; reset/timer/drag fixes applied
-- [x] Final premium polish pass (hero density, feature hierarchy, upload telemetry)
-- [x] Portfolio screenshots (`docs/screenshots/`)
+- [x] AI processing steps with parallel `/api/transcribe` call
+- [x] OpenAI Whisper API (`whisper-1`) + mock fallback without API key
+- [x] Transcript result, copy, download `.txt`, simple local summary
+- [x] Glassmorphism UI, portfolio screenshots, QA + polish
 
-## Portfolio Screenshots
+## API Setup
 
-| File | Size (approx) | Notes |
-|------|---------------|-------|
-| `docs/screenshots/clipscribe-homepage.png` | Desktop 1440×900 | Hero + features |
-| `docs/screenshots/clipscribe-upload.png` | Desktop 1440×900 | Upload card |
-| `docs/screenshots/clipscribe-processing.png` | Desktop 1440×900 | Mock processing |
-| `docs/screenshots/clipscribe-result.png` | Desktop 1440×900 | Transcript + summary |
-| `docs/screenshots/clipscribe-mobile.png` | Mobile 390×844 | Landing stack |
+1. Copy `.env.local.example` → `.env.local`
+2. Set `OPENAI_API_KEY` from [OpenAI API keys](https://platform.openai.com/api-keys)
+3. `npm run dev`
 
-Capture: `npm run screenshots` (requires `npm run build` first). Uses Playwright + `next start` (no dev overlay).
+**OpenAI Whisper** supports files up to **25 MB** in this MVP. UI and validation enforce that limit.
 
 ## In Progress
 
@@ -38,6 +28,6 @@ Capture: `npm run screenshots` (requires `npm run build` first). Uses Playwright
 
 ## Pending Tasks
 
-- [ ] Real audio extraction / transcription API
+- [ ] Deploy to Vercel with env var
 - [ ] Speaker diarization
 - [ ] Export SRT / VTT

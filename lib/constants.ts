@@ -9,7 +9,8 @@ export const ACCEPTED_MIME_TYPES = [
   "audio/wave",
 ] as const;
 
-export const MAX_FILE_SIZE_MB = 500;
+/** OpenAI Whisper API limit for live transcription in this MVP */
+export const MAX_FILE_SIZE_MB = 25;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export const PROCESSING_STEPS = [

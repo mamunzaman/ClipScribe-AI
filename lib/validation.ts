@@ -2,7 +2,6 @@ import {
   ACCEPTED_EXTENSIONS,
   ACCEPTED_MIME_TYPES,
   MAX_FILE_SIZE_BYTES,
-  MAX_FILE_SIZE_MB,
 } from "./constants";
 
 export interface ValidationResult {
@@ -41,7 +40,7 @@ export function validateMediaFile(file: File): ValidationResult {
   if (file.size > MAX_FILE_SIZE_BYTES) {
     return {
       valid: false,
-      error: `File too large. Maximum size is ${MAX_FILE_SIZE_MB} MB.`,
+      error: "File must be 25 MB or smaller for live transcription.",
     };
   }
 

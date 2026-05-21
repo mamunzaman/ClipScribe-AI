@@ -17,14 +17,14 @@ https://clipscribeai-ruby.vercel.app/
 
 **ClipScribe AI** is a premium AI transcription studio with a **Base44 / iOS-inspired** glass interface. Upload audio or video, track processing in real time, and review clean timestamped transcripts with export tools — designed for portfolio, recruiters, and client demos.
 
-Transcription is **mocked** today; the app flow is ready for Whisper / OpenAI integration.
+Live transcription uses the **OpenAI Whisper API** (`whisper-1`). Without `OPENAI_API_KEY`, the app falls back to mock data. **OpenAI Whisper supports files up to 25 MB** in this MVP — uploads are validated client- and server-side to match that limit.
 
 ---
 
 ## Features
 
 - AI transcription workflow (upload → progress → processing → result)
-- Drag & drop upload with format and size validation (MP4, MOV, MP3, WAV)
+- Drag & drop upload — MP4, MOV, MP3, WAV, max **25 MB** (Whisper API limit)
 - Glassmorphism UI with layered panels and calm dark theme
 - Animated AI processing steps and progress indicators
 - Transcript viewer with timestamp lane, copy, and `.txt` download
@@ -98,7 +98,7 @@ npm run screenshots
 
 ## Roadmap
 
-- [ ] Real transcription API (Whisper / OpenAI)
+- [x] OpenAI Whisper transcription API
 - [ ] Speaker diarization
 - [ ] SRT / VTT export
 - [ ] Deploy to Vercel

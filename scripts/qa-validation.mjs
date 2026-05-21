@@ -4,7 +4,7 @@
  */
 
 const ACCEPTED_EXTENSIONS = [".mp4", ".mov", ".mp3", ".wav"];
-const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
+const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
 
 function getExtension(filename) {
   const dot = filename.lastIndexOf(".");
@@ -24,7 +24,7 @@ function validateMediaFile(file) {
     return { valid: false, error: `Unsupported file type (${file.type}).` };
   }
   if (file.size > MAX_FILE_SIZE_BYTES) {
-    return { valid: false, error: `File too large. Maximum size is 500 MB.` };
+    return { valid: false, error: "File must be 25 MB or smaller for live transcription." };
   }
   if (file.size === 0) {
     return { valid: false, error: "File is empty." };
