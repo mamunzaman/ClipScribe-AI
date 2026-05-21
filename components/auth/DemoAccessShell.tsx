@@ -44,7 +44,12 @@ export function DemoAccessShell({ children }: { children: React.ReactNode }) {
     setPhase("unlocked");
   }, []);
 
-  const lockDemo = useCallback(() => {
+  const lockDemo = useCallback(async () => {
+    try {
+      await fetch("/api/lock-demo", { method: "POST", credentials: "include" });
+    } catch {
+      /* ignore */
+    }
     setPhase("locked");
   }, []);
 

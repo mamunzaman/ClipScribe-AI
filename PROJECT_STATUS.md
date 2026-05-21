@@ -1,33 +1,28 @@
 # ClipScribe AI — Project Status
 
-**Last Update:** 2026-05-21 (demo password gate)
+**Last Update:** 2026-05-21 (Cloudflare Turnstile + demo access cookie)
 
 ## Completed Features
 
-- [x] Next.js 15 App Router + TypeScript + Tailwind
-- [x] Premium glass UI (Base44 / iOS style)
-- [x] Drag & drop upload (MP4, MOV, MP3, WAV)
-- [x] Validation: **25 MB max**, **30 sec minimum**
-- [x] OpenAI Whisper API + mock fallback
-- [x] Upload → processing → transcript → copy/download/reset
-- [x] **Demo password gate** (`DEMO_PASSWORD`, server-only, required each reload)
-- [x] Session-memory unlock only + optional **Lock demo** (same visit)
-- [x] Portfolio screenshots
+- [x] Premium glass UI + full transcription flow
+- [x] OpenAI Whisper + mock fallback
+- [x] Upload limits: 25 MB max, 30 sec minimum
+- [x] **DEMO_PASSWORD** gate (password each reload, session UI only)
+- [x] **Cloudflare Turnstile** on password screen
+- [x] Signed **HttpOnly cookie** for `/api/transcribe` (1h, cleared on Lock demo)
+- [x] `POST /api/lock-demo` clears access cookie
 
-## Demo access
+## Environment variables
 
-1. Set `DEMO_PASSWORD` in `.env.local` (see `.env.local.example`)
-2. Enter password each time you load or reload the site
-3. **Lock demo** returns to the gate without reloading (same tab session)
-4. Dev without `DEMO_PASSWORD`: gate bypassed automatically
-
-## API Setup
-
-- `OPENAI_API_KEY` — optional; mock transcript without it
-- `DEMO_PASSWORD` — optional in dev; required for protected production demo
+| Variable | Required for |
+|----------|----------------|
+| `DEMO_PASSWORD` | Protected demo (prod) |
+| `OPENAI_API_KEY` | Live Whisper |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Turnstile widget |
+| `TURNSTILE_SECRET_KEY` | CAPTCHA verify + cookie signing |
 
 ## Pending Tasks
 
-- [ ] Deploy to Vercel (`OPENAI_API_KEY`, `DEMO_PASSWORD`)
+- [ ] Deploy to Vercel with all env vars
 - [ ] Speaker diarization
 - [ ] Export SRT / VTT

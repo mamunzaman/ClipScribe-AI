@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { DemoAccessShell } from "@/components/auth/DemoAccessShell";
 import { AppBackground } from "@/components/layout/AppBackground";
@@ -32,6 +33,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
+        />
         <div className="relative flex min-h-screen flex-col">
           <AppBackground />
           <DemoAccessShell>

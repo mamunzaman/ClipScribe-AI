@@ -2,27 +2,89 @@
 
 import { motion } from "framer-motion";
 import { Lock, Mic2 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface DemoPasswordGateProps {
   onUnlock: () => void;
 }
 
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+
 export function DemoPasswordGate({ onUnlock }: DemoPasswordGateProps) {
   const [password, setPassword] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  const captchaRequired = Boolean(SITE_KEY);
+  const canSubmit =
+    password.trim().length > 0 &&
+    (!captchaRequired || Boolean(turnstileToken));
+
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken(null);
+    if (widgetIdRef.current && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!SITE_KEY || !containerRef.current) return;
+
+    const renderWidget = () => {
+      if (!window.turnstile || !containerRef.current) return;
+      if (widgetIdRef.current) {
+        try {
+          window.turnstile.remove(widgetIdRef.current);
+        } catch {
+          /* ignore */
+        }
+        widgetIdRef.current = null;
+      }
+      widgetIdRef.current = window.turnstile.render(containerRef.current, {
+        sitekey: SITE_KEY,
+        theme: "dark",
+        callback: (token: string) => setTurnstileToken(token),
+        "error-callback": () => setTurnstileToken(null),
+        "expired-callback": () => setTurnstileToken(null),
+      });
+    };
+
+    if (window.turnstile) {
+      renderWidget();
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      if (window.turnstile) {
+        window.clearInterval(interval);
+        renderWidget();
+      }
+    }, 120);
+
+    return () => window.clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!canSubmit) return;
+
     setLoading(true);
 
     try {
       const res = await fetch("/api/verify-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        credentials: "include",
+        body: JSON.stringify({
+          password,
+          turnstileToken: turnstileToken ?? "",
+        }),
       });
       const data = (await res.json()) as {
         ok?: boolean;
@@ -36,8 +98,10 @@ export function DemoPasswordGate({ onUnlock }: DemoPasswordGateProps) {
       }
 
       setError(data.error ?? "Incorrect password");
+      resetTurnstile();
     } catch {
       setError("Could not verify password. Try again.");
+      resetTurnstile();
     } finally {
       setLoading(false);
     }
@@ -89,6 +153,22 @@ export function DemoPasswordGate({ onUnlock }: DemoPasswordGateProps) {
             />
           </div>
 
+          <div>
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+              Verification
+            </p>
+            {SITE_KEY ? (
+              <div
+                ref={containerRef}
+                className="flex min-h-[65px] items-center justify-center overflow-hidden rounded-xl border border-white/[0.06] bg-black/20"
+              />
+            ) : (
+              <p className="rounded-xl border border-amber-400/20 bg-amber-500/[0.08] px-3 py-2.5 text-[13px] text-amber-100/90">
+                CAPTCHA is not configured.
+              </p>
+            )}
+          </div>
+
           {error && (
             <motion.p
               initial={{ opacity: 0, y: -4 }}
@@ -101,7 +181,7 @@ export function DemoPasswordGate({ onUnlock }: DemoPasswordGateProps) {
 
           <button
             type="submit"
-            disabled={loading || !password.trim()}
+            disabled={loading || !canSubmit}
             className="btn-primary flex w-full items-center justify-center gap-2 px-5 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Lock className="h-4 w-4" />

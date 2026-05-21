@@ -86,11 +86,15 @@ Copy `.env.local.example` to `.env.local`:
 | Variable | Purpose |
 |----------|---------|
 | `OPENAI_API_KEY` | Live Whisper transcription (optional — mock fallback without it) |
-| `DEMO_PASSWORD` | Protects the demo UI (server-only, never exposed to the browser) |
+| `DEMO_PASSWORD` | Protects the demo (server-only) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public) |
+| `TURNSTILE_SECRET_KEY` | Turnstile secret for server verification |
 
-Without `DEMO_PASSWORD` in **development**, the gate is skipped. In **production**, set `DEMO_PASSWORD` on your host (e.g. Vercel).
+**DEMO_PASSWORD** protects the demo UI. **Turnstile** reduces bot/spam abuse on unlock and blocks unauthenticated calls to `/api/transcribe`.
 
-Demo password is required on **each page reload**. Unlock is **session-memory only** (React state) and is **not** stored in `localStorage`. Use **Lock demo** to return to the gate during the same visit without reloading.
+Without `DEMO_PASSWORD` in **development**, the gate is skipped. In **production**, set all env vars on your host (e.g. Vercel).
+
+Demo password is required on **each page reload** (React state only, not `localStorage`). After unlock, a signed **HttpOnly cookie** (`clipscribe_demo_access`, 1 hour) authorizes transcription API calls. **Lock demo** clears the cookie and returns to the gate.
 
 ```bash
 npm run build

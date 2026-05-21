@@ -2,14 +2,13 @@
 
 ## Current goal
 
-Deploy to Vercel with `OPENAI_API_KEY` and `DEMO_PASSWORD` environment variables.
+Deploy to Vercel with `DEMO_PASSWORD`, `OPENAI_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, and `TURNSTILE_SECRET_KEY`.
 
-## Demo password gate (2026-05-21) — DONE
+## Turnstile + access cookie (2026-05-21) — DONE
 
-- `POST/GET /api/verify-password` — timing-safe compare, dev bypass when unset
-- `DemoAccessShell` + `DemoPasswordGate` — glass UI, no flash before check
-- Unlock in React state only — password required on every reload
-- Header/footer **Lock demo** (in-session only)
-- Removed `lib/demo-auth.ts` / localStorage persistence
+- Turnstile on `DemoPasswordGate`; verify via `/api/verify-password`
+- Signed HttpOnly `clipscribe_demo_access` cookie (1h) after unlock
+- `/api/transcribe` requires valid cookie when demo is protected
+- `/api/lock-demo` clears cookie
 
-**Verify next:** Production deploy; reload always shows gate; Lock demo works without reload.
+**Verify next:** Production Turnstile keys; unlock → transcribe; reload shows gate; cookie still valid until expiry or Lock demo.

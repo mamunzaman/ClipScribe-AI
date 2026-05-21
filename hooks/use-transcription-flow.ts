@@ -125,6 +125,7 @@ export function useTranscriptionFlow() {
         method: "POST",
         body: formData,
         signal,
+        credentials: "include",
       });
 
       const data = (await res.json()) as TranscribeApiResponse;

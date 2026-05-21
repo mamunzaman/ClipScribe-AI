@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import {
+  DEMO_ACCESS_COOKIE,
+  isValidDemoAccessValue,
+  requiresDemoAccessCookie,
+} from "@/lib/demo-access-cookie";
 import { MIN_DURATION_ERROR, MIN_DURATION_SECONDS } from "@/lib/constants";
 import { validateMediaFile } from "@/lib/validation";
 
@@ -8,6 +13,16 @@ export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
+    if (requiresDemoAccessCookie()) {
+      const access = request.cookies.get(DEMO_ACCESS_COOKIE)?.value;
+      if (!isValidDemoAccessValue(access)) {
+        return NextResponse.json(
+          { error: "Demo access required. Unlock the app first." },
+          { status: 401 }
+        );
+      }
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
 

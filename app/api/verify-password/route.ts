@@ -1,5 +1,10 @@
 import { timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  attachDemoAccessCookie,
+  requiresDemoAccessCookie,
+} from "@/lib/demo-access-cookie";
+import { isTurnstileConfigured, verifyTurnstileToken } from "@/lib/turnstile";
 
 function getDemoPassword(): string | undefined {
   const value = process.env.DEMO_PASSWORD?.trim();
@@ -27,24 +32,54 @@ export async function GET() {
   return NextResponse.json({
     required,
     configured,
+    turnstileConfigured: isTurnstileConfigured(),
   });
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as { password?: string };
+    const body = (await request.json()) as {
+      password?: string;
+      turnstileToken?: string;
+    };
     const password = typeof body.password === "string" ? body.password : "";
+    const turnstileToken =
+      typeof body.turnstileToken === "string" ? body.turnstileToken : "";
     const expected = getDemoPassword();
 
     if (!expected) {
       if (isDevelopment()) {
-        return NextResponse.json({ ok: true, bypass: true });
+        const response = NextResponse.json({ ok: true, bypass: true });
+        if (!requiresDemoAccessCookie()) return response;
+        return attachDemoAccessCookie(response);
       }
       return NextResponse.json(
         {
           ok: false,
           error:
             "Demo password is not configured. Set DEMO_PASSWORD in the environment.",
+        },
+        { status: 503 }
+      );
+    }
+
+    if (isTurnstileConfigured()) {
+      const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+        request.headers.get("x-real-ip") ||
+        undefined;
+      const captchaOk = await verifyTurnstileToken(turnstileToken, ip);
+      if (!captchaOk) {
+        return NextResponse.json(
+          { ok: false, error: "CAPTCHA verification failed" },
+          { status: 403 }
+        );
+      }
+    } else if (!isDevelopment()) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "CAPTCHA is not configured on the server.",
         },
         { status: 503 }
       );
@@ -57,7 +92,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ ok: true });
+    const response = NextResponse.json({ ok: true });
+    return attachDemoAccessCookie(response);
   } catch {
     return NextResponse.json(
       { ok: false, error: "Invalid request." },
