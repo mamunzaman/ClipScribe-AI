@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import { Check, Copy, Download, Share2 } from "lucide-react";
 import { useState } from "react";
-import { copyToClipboard, downloadTextFile } from "@/lib/utils";
+import { downloadTextFile } from "@/lib/download-text-file";
+import { copyToClipboard } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
 interface TranscriptActionsProps {
@@ -26,7 +27,7 @@ export function TranscriptActions({
   };
 
   const handleDownload = () => {
-    downloadTextFile(text, downloadFilename);
+    downloadTextFile(downloadFilename, text);
   };
 
   return (

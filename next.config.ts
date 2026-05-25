@@ -6,7 +6,13 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "30mb",
     },
   },
-  serverExternalPackages: ["openai"],
+  serverExternalPackages: ["openai", "ffmpeg-static", "ffprobe-static"],
+  outputFileTracingIncludes: {
+    "/api/transcribe": [
+      "./node_modules/ffmpeg-static/**/*",
+      "./node_modules/ffmpeg-static/ffmpeg*",
+    ],
+  },
 };
 
 export default nextConfig;

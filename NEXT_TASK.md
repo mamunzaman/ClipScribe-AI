@@ -2,13 +2,11 @@
 
 ## Current goal
 
-Deploy to Vercel with `DEMO_PASSWORD`, `OPENAI_API_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, and `TURNSTILE_SECRET_KEY`.
+Deploy to Vercel: set all env vars from `.env.local.example`, then verify 2 min MP4 clips and transcribes on production.
 
-## Turnstile + access cookie (2026-05-21) — DONE
+## Client download audit (2026-05-21) — DONE
 
-- Turnstile on `DemoPasswordGate`; verify via `/api/verify-password`
-- Signed HttpOnly `clipscribe_demo_access` cookie (1h) after unlock
-- `/api/transcribe` requires valid cookie when demo is protected
-- `/api/lock-demo` clears cookie
+- Transcript `.txt` download is Blob-only; API returns JSON text only
+- FFmpeg temps stay in `os.tmpdir()` with `finally` cleanup
 
-**Verify next:** Production Turnstile keys; unlock → transcribe; reload shows gate; cookie still valid until expiry or Lock demo.
+**Verify next:** Production upload after deploy; test Download .txt and Copy on result screen.

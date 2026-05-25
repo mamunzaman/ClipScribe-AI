@@ -6,6 +6,8 @@ import {
 } from "@/lib/demo-access-cookie";
 import { isTurnstileConfigured, verifyTurnstileToken } from "@/lib/turnstile";
 
+export const runtime = "nodejs";
+
 function getDemoPassword(): string | undefined {
   const value = process.env.DEMO_PASSWORD?.trim();
   return value || undefined;

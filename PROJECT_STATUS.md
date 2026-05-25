@@ -1,28 +1,29 @@
 # ClipScribe AI — Project Status
 
-**Last Update:** 2026-05-21 (Cloudflare Turnstile + demo access cookie)
+**Last Update:** 2026-05-21 (client-only transcript download audit)
 
 ## Completed Features
 
 - [x] Premium glass UI + full transcription flow
 - [x] OpenAI Whisper + mock fallback
-- [x] Upload limits: 25 MB max, 30 sec minimum
-- [x] **DEMO_PASSWORD** gate (password each reload, session UI only)
-- [x] **Cloudflare Turnstile** on password screen
-- [x] Signed **HttpOnly cookie** for `/api/transcribe` (1h, cleared on Lock demo)
-- [x] `POST /api/lock-demo` clears access cookie
+- [x] Upload **max 5 min** (env `NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS`, default 300s)
+- [x] Transcribe **first 30s only** (env `TRANSCRIBE_CLIP_SECONDS`, bundled `ffmpeg-static` before Whisper)
+- [x] Demo password + Turnstile + access cookie
+- [x] Portfolio screenshots
+- [x] Vercel production config (`vercel.json`, Node API runtime, FFmpeg trace)
+- [x] Transcript copy/download client-only (`Blob` + `revokeObjectURL`; no server `.txt` files)
 
-## Environment variables
+## Demo media limits
 
-| Variable | Required for |
-|----------|----------------|
-| `DEMO_PASSWORD` | Protected demo (prod) |
-| `OPENAI_API_KEY` | Live Whisper |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Turnstile widget |
-| `TURNSTILE_SECRET_KEY` | CAPTCHA verify + cookie signing |
+| Limit | Env | Default |
+|-------|-----|---------|
+| Max upload duration | `NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS` | 300s (5 min) |
+| Transcription clip | `TRANSCRIBE_CLIP_SECONDS` | 30s |
+
+Uses bundled **`ffmpeg-static`** for clipping (no global FFmpeg install required). Temp files use `os.tmpdir()` only.
 
 ## Pending Tasks
 
-- [ ] Deploy to Vercel with all env vars
+- [ ] Deploy to Vercel (env vars set; verify 2 min MP4 on production)
 - [ ] Speaker diarization
 - [ ] Export SRT / VTT

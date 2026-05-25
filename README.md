@@ -24,7 +24,7 @@ Live transcription uses the **OpenAI Whisper API** (`whisper-1`). Without `OPENA
 ## Features
 
 - AI transcription workflow (upload → progress → processing → result)
-- Drag & drop upload — MP4, MOV, MP3, WAV, **25 MB max**, **30 sec minimum**
+- Drag & drop upload — MP4, MOV, MP3, WAV, **25 MB max**, uploads up to **5 min** (`NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS`), Whisper receives only the first **30s** (`TRANSCRIBE_CLIP_SECONDS` + bundled `ffmpeg-static`)
 - Glassmorphism UI with layered panels and calm dark theme
 - Animated AI processing steps and progress indicators
 - Transcript viewer with timestamp lane, copy, and `.txt` download
@@ -89,12 +89,24 @@ Copy `.env.local.example` to `.env.local`:
 | `DEMO_PASSWORD` | Protects the demo (server-only) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public) |
 | `TURNSTILE_SECRET_KEY` | Turnstile secret for server verification |
+| `NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS` | Max upload length (default 300s / 5 min) |
+| `TRANSCRIBE_CLIP_SECONDS` | Seconds sent to Whisper after FFmpeg trim (default 30) |
+
+Audio clipping uses the **`ffmpeg-static`** npm package (no system FFmpeg install required). Temp files are written to the OS temp directory only.
 
 **DEMO_PASSWORD** protects the demo UI. **Turnstile** reduces bot/spam abuse on unlock and blocks unauthenticated calls to `/api/transcribe`.
 
 Without `DEMO_PASSWORD` in **development**, the gate is skipped. In **production**, set all env vars on your host (e.g. Vercel).
 
 Demo password is required on **each page reload** (React state only, not `localStorage`). After unlock, a signed **HttpOnly cookie** (`clipscribe_demo_access`, 1 hour) authorizes transcription API calls. **Lock demo** clears the cookie and returns to the gate.
+
+### Deploy to Vercel
+
+1. Import the GitHub repo in [Vercel](https://vercel.com).
+2. Add **all** variables from `.env.local.example` in Project → Settings → Environment Variables (Production).
+3. Deploy — build runs `npm run build` on Linux; `ffmpeg-static` ships the Linux binary via `outputFileTracingIncludes` (no system FFmpeg).
+4. `/api/transcribe` uses **Node.js runtime** (`export const runtime = "nodejs"`), `maxDuration` 60s (Pro plan; Hobby limit is 10s).
+5. After deploy: unlock demo → upload a ~2 min MP4 → confirm transcript from first 30s only.
 
 ```bash
 npm run build
@@ -118,7 +130,7 @@ npm run screenshots
 - [x] OpenAI Whisper transcription API
 - [ ] Speaker diarization
 - [ ] SRT / VTT export
-- [ ] Deploy to Vercel
+- [x] Vercel-ready (bundled FFmpeg, Node API routes)
 
 ---
 

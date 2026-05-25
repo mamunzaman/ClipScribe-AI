@@ -12,7 +12,16 @@ import {
 import { useCallback, useRef, useState } from "react";
 import type { DragEvent } from "react";
 import { ACCEPTED_EXTENSIONS } from "@/lib/constants";
+import {
+  formatUploadMaxLabel,
+  getMaxUploadDurationSeconds,
+  getTranscribeClipSecondsForDisplay,
+} from "@/lib/validate-upload-duration";
 import { cn } from "@/lib/utils";
+
+const MAX_UPLOAD_DURATION_SECONDS = getMaxUploadDurationSeconds();
+const TRANSCRIBE_CLIP_SECONDS = getTranscribeClipSecondsForDisplay();
+const UPLOAD_MAX_LABEL = formatUploadMaxLabel(MAX_UPLOAD_DURATION_SECONDS);
 
 interface DropZoneProps {
   onFileSelect: (file: File) => void;
@@ -144,7 +153,11 @@ export function DropZone({ onFileSelect, error, disabled }: DropZoneProps) {
             <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
               Drag & drop, or click to browse.
               <br />
-              MP3, MP4, MOV, WAV · 25 MB max · 30 sec minimum
+              MP3, MP4, MOV, WAV · 25 MB max · up to {UPLOAD_MAX_LABEL}
+            </p>
+            <p className="mt-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-2 text-[12px] leading-relaxed text-zinc-400">
+              Demo mode: videos up to {UPLOAD_MAX_LABEL} are allowed, but only
+              the first {TRANSCRIBE_CLIP_SECONDS} seconds will be transcribed.
             </p>
 
             <div className="mt-3.5 flex flex-wrap items-center justify-center gap-1 sm:justify-start">
@@ -183,6 +196,21 @@ export function DropZone({ onFileSelect, error, disabled }: DropZoneProps) {
           </div>
         </div>
 
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-4 flex items-start gap-2.5 rounded-xl border border-red-400/20 bg-red-500/[0.08] px-3.5 py-3 text-[13px] leading-relaxed text-red-200 backdrop-blur-xl"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {isDragging && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -191,21 +219,6 @@ export function DropZone({ onFileSelect, error, disabled }: DropZoneProps) {
           />
         )}
       </motion.div>
-
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.25 }}
-            className="mt-3 flex items-center gap-2.5 rounded-2xl border border-red-400/20 bg-red-500/[0.08] px-4 py-3 text-[13px] text-red-200 backdrop-blur-xl"
-          >
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {error}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

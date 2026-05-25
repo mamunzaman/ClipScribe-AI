@@ -8,7 +8,7 @@ import {
 } from "@/lib/constants";
 import { buildTranscriptResult } from "@/lib/build-transcript-result";
 import { generateMockTranscript } from "@/lib/mock-data";
-import { validateMediaDuration } from "@/lib/media-duration";
+import { validateUploadDuration } from "@/lib/validate-upload-duration";
 import { validateMediaFile } from "@/lib/validation";
 import type {
   AppView,
@@ -152,8 +152,16 @@ export function useTranscriptionFlow() {
         return;
       }
 
-      const durationCheck = await validateMediaDuration(file);
+      const durationCheck = await validateUploadDuration(file);
       if (!durationCheck.valid) {
+        abortRef.current?.abort();
+        runIdRef.current += 1;
+        setView("landing");
+        setUploadProgress(0);
+        setCurrentStep(null);
+        setCompletedSteps([]);
+        setFileInfo(null);
+        setSessionKey((k) => k + 1);
         setError(durationCheck.error ?? "Invalid file");
         return;
       }

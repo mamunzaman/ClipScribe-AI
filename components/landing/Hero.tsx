@@ -240,7 +240,7 @@ export function Hero() {
             ))}
           </div>
           <div className="mt-4 border-t border-white/[0.05] pt-3.5">
-            <p className="text-[11px] text-zinc-600">Up to 25 MB per file · Whisper API limit</p>
+            <p className="text-[11px] text-zinc-600">Up to 25 MB · testing duration cap applies</p>
           </div>
         </motion.div>
 

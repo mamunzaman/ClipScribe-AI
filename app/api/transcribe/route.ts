@@ -5,11 +5,16 @@ import {
   isValidDemoAccessValue,
   requiresDemoAccessCookie,
 } from "@/lib/demo-access-cookie";
-import { MIN_DURATION_ERROR, MIN_DURATION_SECONDS } from "@/lib/constants";
+import { trimMediaForTranscription } from "@/lib/trim-media-for-transcription";
+import {
+  getMaxUploadDurationSeconds,
+  uploadMaxErrorMessage,
+} from "@/lib/validate-upload-duration";
 import { validateMediaFile } from "@/lib/validation";
 
 export const runtime = "nodejs";
-export const maxDuration = 300;
+/** FFmpeg clip + Whisper; Vercel Hobby max 10s, Pro up to 60s (see vercel.json). */
+export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,26 +43,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const maxUploadSeconds = getMaxUploadDurationSeconds();
     const durationRaw = formData.get("durationSeconds");
     if (durationRaw != null && String(durationRaw).trim() !== "") {
       const duration = Number.parseFloat(String(durationRaw));
-      if (Number.isFinite(duration) && duration < MIN_DURATION_SECONDS) {
-        return NextResponse.json({ error: MIN_DURATION_ERROR }, { status: 400 });
+      if (Number.isFinite(duration) && duration > maxUploadSeconds) {
+        return NextResponse.json(
+          { error: uploadMaxErrorMessage(maxUploadSeconds) },
+          { status: 400 }
+        );
       }
     }
-    // TODO: Server-side duration via ffmpeg/ffprobe when client metadata is unavailable.
 
     const apiKey = process.env.OPENAI_API_KEY?.trim();
     if (!apiKey) {
       return NextResponse.json({ mock: true });
     }
 
+    const clippedFile = await trimMediaForTranscription(file);
+
     const openai = new OpenAI({ apiKey });
     const result = await openai.audio.transcriptions.create({
-      file,
+      file: clippedFile,
       model: "whisper-1",
     });
 
+    // JSON only — transcript .txt download is client-side (Blob), never written on server.
     return NextResponse.json({
       transcript: result.text,
       mock: false,
