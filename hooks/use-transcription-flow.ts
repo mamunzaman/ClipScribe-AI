@@ -8,6 +8,10 @@ import {
 } from "@/lib/constants";
 import { buildTranscriptResult } from "@/lib/build-transcript-result";
 import { generateMockTranscript } from "@/lib/mock-data";
+import {
+  parseTranscribeResponse,
+  type TranscribeApiResponse,
+} from "@/lib/parse-transcribe-response";
 import { validateUploadDuration } from "@/lib/validate-upload-duration";
 import { validateMediaFile } from "@/lib/validation";
 import type {
@@ -16,11 +20,6 @@ import type {
   TranscriptResult,
   UploadedFileInfo,
 } from "@/types";
-
-type TranscribeApiResponse =
-  | { mock: true }
-  | { transcript: string; mock: false }
-  | { error: string };
 
 export function useTranscriptionFlow() {
   const [view, setView] = useState<AppView>("landing");
@@ -128,17 +127,7 @@ export function useTranscriptionFlow() {
         credentials: "include",
       });
 
-      const data = (await res.json()) as TranscribeApiResponse;
-
-      if (!res.ok) {
-        const message =
-          "error" in data && typeof data.error === "string"
-            ? data.error
-            : "Transcription failed. Please try again.";
-        throw new Error(message);
-      }
-
-      return data;
+      return parseTranscribeResponse(res);
     },
     []
   );

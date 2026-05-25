@@ -17,14 +17,14 @@ https://clipscribeai-ruby.vercel.app/
 
 **ClipScribe AI** is a premium AI transcription studio with a **Base44 / iOS-inspired** glass interface. Upload audio or video, track processing in real time, and review clean timestamped transcripts with export tools — designed for portfolio, recruiters, and client demos.
 
-Live transcription uses the **OpenAI Whisper API** (`whisper-1`). Without `OPENAI_API_KEY`, the app falls back to mock data. **OpenAI Whisper supports files up to 25 MB** in this MVP — uploads are validated client- and server-side to match that limit.
+Live transcription uses the **OpenAI Whisper API** (`whisper-1`). Without `OPENAI_API_KEY`, the app falls back to mock data. Demo uploads are capped at **4 MB** (`NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`) for Vercel-safe payloads — validated client- and server-side before `/api/transcribe`.
 
 ---
 
 ## Features
 
 - AI transcription workflow (upload → progress → processing → result)
-- Drag & drop upload — MP4, MOV, MP3, WAV, **25 MB max**, uploads up to **5 min** (`NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS`), Whisper receives only the first **30s** (`TRANSCRIBE_CLIP_SECONDS` + bundled `ffmpeg-static`)
+- Drag & drop upload — MP4, MOV, MP3, WAV, **4 MB max** (`NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`), up to **5 min** (`NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS`), Whisper receives only the first **30s** (`TRANSCRIBE_CLIP_SECONDS` + bundled `ffmpeg-static`)
 - Glassmorphism UI with layered panels and calm dark theme
 - Animated AI processing steps and progress indicators
 - Transcript viewer with timestamp lane, copy, and `.txt` download
@@ -89,6 +89,7 @@ Copy `.env.local.example` to `.env.local`:
 | `DEMO_PASSWORD` | Protects the demo (server-only) |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public) |
 | `TURNSTILE_SECRET_KEY` | Turnstile secret for server verification |
+| `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` | Max file size before upload (default 4 MB; blocks API call) |
 | `NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS` | Max upload length (default 300s / 5 min) |
 | `TRANSCRIBE_CLIP_SECONDS` | Seconds sent to Whisper after FFmpeg trim (default 30) |
 

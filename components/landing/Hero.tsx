@@ -12,7 +12,9 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { getMaxUploadSizeMb } from "@/lib/upload-size";
 
+const MAX_UPLOAD_SIZE_MB = getMaxUploadSizeMb();
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 function fadeUp(delay = 0) {
@@ -240,7 +242,9 @@ export function Hero() {
             ))}
           </div>
           <div className="mt-4 border-t border-white/[0.05] pt-3.5">
-            <p className="text-[11px] text-zinc-600">Up to 25 MB · testing duration cap applies</p>
+            <p className="text-[11px] text-zinc-600">
+              Up to {MAX_UPLOAD_SIZE_MB} MB · up to 5 min · 30s transcribed
+            </p>
           </div>
         </motion.div>
 

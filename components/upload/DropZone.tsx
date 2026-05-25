@@ -12,6 +12,7 @@ import {
 import { useCallback, useRef, useState } from "react";
 import type { DragEvent } from "react";
 import { ACCEPTED_EXTENSIONS } from "@/lib/constants";
+import { getMaxUploadSizeMb } from "@/lib/upload-size";
 import {
   formatUploadMaxLabel,
   getMaxUploadDurationSeconds,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 const MAX_UPLOAD_DURATION_SECONDS = getMaxUploadDurationSeconds();
 const TRANSCRIBE_CLIP_SECONDS = getTranscribeClipSecondsForDisplay();
 const UPLOAD_MAX_LABEL = formatUploadMaxLabel(MAX_UPLOAD_DURATION_SECONDS);
+const MAX_UPLOAD_SIZE_MB = getMaxUploadSizeMb();
 
 interface DropZoneProps {
   onFileSelect: (file: File) => void;
@@ -153,11 +155,14 @@ export function DropZone({ onFileSelect, error, disabled }: DropZoneProps) {
             <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
               Drag & drop, or click to browse.
               <br />
-              MP3, MP4, MOV, WAV · 25 MB max · up to {UPLOAD_MAX_LABEL}
+              MP3, MP4, MOV, WAV · {MAX_UPLOAD_SIZE_MB} MB max · up to{" "}
+              {UPLOAD_MAX_LABEL}
             </p>
             <p className="mt-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-2 text-[12px] leading-relaxed text-zinc-400">
-              Demo mode: videos up to {UPLOAD_MAX_LABEL} are allowed, but only
-              the first {TRANSCRIBE_CLIP_SECONDS} seconds will be transcribed.
+              Demo mode supports files up to {MAX_UPLOAD_SIZE_MB} MB. Longer
+              videos may need compression before upload. Up to {UPLOAD_MAX_LABEL}{" "}
+              allowed; only the first {TRANSCRIBE_CLIP_SECONDS} seconds are
+              transcribed.
             </p>
 
             <div className="mt-3.5 flex flex-wrap items-center justify-center gap-1 sm:justify-start">

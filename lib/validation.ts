@@ -1,8 +1,11 @@
 import {
   ACCEPTED_EXTENSIONS,
   ACCEPTED_MIME_TYPES,
-  MAX_FILE_SIZE_BYTES,
 } from "./constants";
+import {
+  getMaxUploadSizeBytes,
+  uploadSizeErrorMessage,
+} from "./upload-size";
 
 export interface ValidationResult {
   valid: boolean;
@@ -37,10 +40,11 @@ export function validateMediaFile(file: File): ValidationResult {
     };
   }
 
-  if (file.size > MAX_FILE_SIZE_BYTES) {
+  const maxBytes = getMaxUploadSizeBytes();
+  if (file.size > maxBytes) {
     return {
       valid: false,
-      error: "File must be 25 MB or smaller for live transcription.",
+      error: uploadSizeErrorMessage(),
     };
   }
 

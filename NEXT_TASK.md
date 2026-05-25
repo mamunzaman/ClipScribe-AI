@@ -2,11 +2,11 @@
 
 ## Current goal
 
-Deploy to Vercel: set all env vars from `.env.local.example`, then verify 2 min MP4 clips and transcribes on production.
+Deploy to Vercel with env vars (include `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB=4`); verify upload under 4 MB and 413-safe errors.
 
-## Client download audit (2026-05-21) — DONE
+## Upload size + 413 handling (2026-05-21) — DONE
 
-- Transcript `.txt` download is Blob-only; API returns JSON text only
-- FFmpeg temps stay in `os.tmpdir()` with `finally` cleanup
+- Client blocks files > 4 MB before `/api/transcribe`
+- Safe JSON parse; dedicated 413 error message
 
-**Verify next:** Production upload after deploy; test Download .txt and Copy on result screen.
+**Verify next:** Production upload of small MP4; oversized file shows in-card error without API call.

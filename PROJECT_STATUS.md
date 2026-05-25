@@ -1,12 +1,12 @@
 # ClipScribe AI — Project Status
 
-**Last Update:** 2026-05-21 (client-only transcript download audit)
+**Last Update:** 2026-05-21 (4 MB upload limit + safe 413 handling)
 
 ## Completed Features
 
 - [x] Premium glass UI + full transcription flow
 - [x] OpenAI Whisper + mock fallback
-- [x] Upload **max 5 min** (env `NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS`, default 300s)
+- [x] Upload **max 4 MB** (env `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB`) + **max 5 min** duration
 - [x] Transcribe **first 30s only** (env `TRANSCRIBE_CLIP_SECONDS`, bundled `ffmpeg-static` before Whisper)
 - [x] Demo password + Turnstile + access cookie
 - [x] Portfolio screenshots
@@ -17,6 +17,7 @@
 
 | Limit | Env | Default |
 |-------|-----|---------|
+| Max file size | `NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB` | 4 MB |
 | Max upload duration | `NEXT_PUBLIC_MAX_UPLOAD_DURATION_SECONDS` | 300s (5 min) |
 | Transcription clip | `TRANSCRIBE_CLIP_SECONDS` | 30s |
 
