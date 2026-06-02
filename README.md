@@ -1,7 +1,7 @@
 # ClipScribe AI
 ## Live Demo
 
-https://clipscribeai-ruby.vercel.app/
+[https://clipscribeai-ruby.vercel.app/](https://clip-scribe-ai.vercel.app/)
 
 ### Studio-grade transcripts from any clip.
 
