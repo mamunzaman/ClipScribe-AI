@@ -126,6 +126,28 @@ npm run screenshots
 
 ---
 
+## AI-Assisted Development
+
+This project was developed using AI-assisted software engineering workflows.
+
+### Tools Used
+
+- Cursor AI
+- ChatGPT
+- Claude
+- Google Stitch
+
+### Responsibilities
+
+- Product planning
+- Prompt engineering
+- Application architecture
+- UI/UX design
+- Testing and debugging
+- Deployment and production setup
+
+The project demonstrates rapid MVP development using AI-assisted engineering while maintaining production-quality code and deployment practices.
+
 ## Roadmap
 
 - [x] OpenAI Whisper transcription API
